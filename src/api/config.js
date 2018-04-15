@@ -45,16 +45,19 @@ module.exports = {
         logout: 'user/logout',  // 退出的url, 用户点击退出时, 浏览器会直接跳转到这个链接
         getUserList:'user/list', //获取用户列表
         addUser:'user/add',     //添加用户
+        delUser:'user/remove',     //添加用户
     },
     job: {  // 登录相关配置
-        getJobList: 'job/queryjob',    // 获取任务列表
-        addJob: 'job/add',  // 添加任务
-        pauseJob:'job/pausejob', //暂停任务
-        resumeJob:'job/resumejob',     //恢复任务
-        reScheduleJob:'job/reschedulejob',     //重新调度
-        deleteJob:'job/deletejob',     //删除任务
+        getJobList: 'quartz/list',    // 获取任务列表
+        addJob: 'quartz/add',  // 添加任务
+        pauseJob:'quartz/pausejob', //暂停任务
+        resumeJob:'quartz/resumejob',     //恢复任务
+        editJob:'quartz/edit',     //重新调度
+        deleteJob:'quartz/deletejob',     //删除任务
     },
-
+    ip:{
+        getJobList: 'quartz/list',    // 获取任务列表
+    },
     upload: {  // 上传相关配置
         // 上传图片和上传普通文件分别配置
         image: '/uploadImage',  // 默认的上传图片接口

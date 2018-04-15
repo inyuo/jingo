@@ -2,11 +2,11 @@
     <el-form :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-position="left" label-width="0px"
              class="demo-ruleForm login-container">
         <h3 class="title">系统登录</h3>
-        <el-form-item prop="account">
-            <el-input type="text" v-model="ruleForm2.account" auto-complete="off" placeholder="账号"></el-input>
+        <el-form-item prop="account" >
+            <el-input type="text" v-model="ruleForm2.username" auto-complete="off" placeholder="账号"></el-input>
         </el-form-item>
-        <el-form-item prop="checkPass">
-            <el-input type="password" v-model="ruleForm2.checkPass" auto-complete="off" placeholder="密码"></el-input>
+        <el-form-item prop="checkPass" >
+            <el-input type="password" v-model="ruleForm2.password" auto-complete="off" placeholder="密码"></el-input>
         </el-form-item>
         <el-checkbox v-model="checked" checked class="remember">记住密码</el-checkbox>
         <el-form-item style="width:100%;">
@@ -18,25 +18,21 @@
 </template>
 
 <script>
-    import {requestLogin} from '../api/api';
-    import ajax from '../api/RealAjax';
-    //import NProgress from 'nprogress'
+    import {requestLogin,getBingPic} from '../api/api';
     export default {
         data() {
             return {
                 logining: false,
                 ruleForm2: {
-                    account: 'admin',
-                    checkPass: '123456'
+                    username: 'admin',
+                    password: '1'
                 },
                 rules2: {
-                    account: [
+                    username: [
                         {required: true, message: '请输入账号', trigger: 'blur'},
-                        //{ validator: validaePass }
                     ],
-                    checkPass: [
+                    password: [
                         {required: true, message: '请输入密码', trigger: 'blur'},
-                        //{ validator: validaePass2 }
                     ]
                 },
                 checked: true
@@ -46,30 +42,38 @@
             handleReset2() {
                 this.$refs.ruleForm2.resetFields();
             },
-            handleSubmit2(ev) {
-                var _this = this;
+            getBackgroupPic(){
+                getBingPic(null).then(res => {
+                    console.log(res)
+                    this.logining = false;
+                    if (res.status == 1) {
+                        this.$message({
+                            message: res.msg,
+                            type: 'error'
+                        });
+                    } else {
+                        sessionStorage.setItem('user', JSON.stringify(res.data));
+                        this.$router.push({path: '/table'});
+                    }
+                });
+
+            },
+            handleSubmit2(e) {
                 this.$refs.ruleForm2.validate((valid) => {
                     if (valid) {
-                        //_this.$router.replace('/table');
                         this.logining = true;
-                        //NProgress.start();
-                        var loginParams = {username: this.ruleForm2.account, password: this.ruleForm2.checkPass};
-
-                        requestLogin(loginParams).then(res => {
-                          this.logining = false;
-                            console.log(res);
-                          //NProgress.done();
-                          let { msg, status, data } = res;
-
-                          if (res.status==1) {
-                            this.$message({
-                              message: msg,
-                              type: 'error'
-                            });
-                          } else {
-                            sessionStorage.setItem('user', JSON.stringify(res.data));
-                            this.$router.push({ path: '/table' });
-                          }
+                        let para = Object.assign({}, this.ruleForm2);
+                        requestLogin(para).then(res => {
+                            this.logining = false;
+                            if (res.status == 1) {
+                                this.$message({
+                                    message: res.msg,
+                                    type: 'error'
+                                });
+                            } else {
+                                sessionStorage.setItem('user', JSON.stringify(res.data));
+                                this.$router.push({path: '/table'});
+                            }
                         });
                     } else {
                         console.log('check your username or password!!');
@@ -77,6 +81,9 @@
                     }
                 });
             }
+        },
+        mounted() {
+            // this.getBackgroupPic();
         }
     }
 
@@ -93,6 +100,7 @@
         width: 350px;
         padding: 35px 35px 15px 35px;
         background: #fff;
+        /*background-image: '';*/
         border: 1px solid #eaeaea;
         box-shadow: 0 0 25px #cac6c6;
         .title {

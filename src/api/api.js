@@ -3,7 +3,6 @@ import superagent from 'superagent';
 import globalConfig from "./config";
 import Logger from '../common/js/Logger';
 
-let base = '127.0.0.1:8080';
 let logger = new Logger('Ajax');
 
 /**
@@ -26,21 +25,25 @@ let logger = new Logger('Ajax');
         if (globalConfig.api.timeout && !isNaN(globalConfig.api.timeout)) {
             tmp.timeout(globalConfig.api.timeout);
         }
-        // 默认的Content-Type和Accept
-        tmp.set('Content-Type', 'application/x-www-form-urlencoded');
+        // 默认的Content-Type和Accept x-www-form-urlencoded
+
         tmp.set('Accept', 'application/json');
         tmp.set('Access-Control-Allow-Origin', '*');
         tmp.set('Access-Control-Allow-Credential', 'true');
         tmp.set('Access-Control-Allow-Methods', 'GET, HEAD, POST, PUT, DELETE, OPTIONS');
 
         // url中是否有附加的参数?
-        if (params) {
-            tmp.query(params);
+        if (method=='POST') {
+            tmp.set('Content-Type', 'application/son');
+
+            tmp.query(data);
         }
         // body中发送的数据?
-        if (data) {
-            tmp.send(data);
+        if (method=='GET') {
+            tmp.set('Content-Type', 'application/x-www-form-urlencoded');
+            tmp.send(params);
         }
+        console.info(tmp);
         // 包装成promise
         tmp.end((err, res) => {
             logger.debug('err=%o, res=%o', err, res);
@@ -55,7 +58,6 @@ let logger = new Logger('Ajax');
     });
 }
 
-// 基础的get/post方法
 
 
 export const requestLogin = data  => {
@@ -67,20 +69,44 @@ export const getUserList = params => {
 };
 
 export const getUserListPage = params => {
-    return requestWrapper('GET',`${globalConfig.getAPIPath()}${globalConfig.login.getUserList}`,null,  params);
+    return requestWrapper('GET',`${globalConfig.getAPIPath()}${globalConfig.login.getUserList}`,  null,params);
 };
 
-export const getJobListPage = data => {
-    return requestWrapper('POST',`${globalConfig.getAPIPath()}${globalConfig.job.getJobList}`,  data);
+export const removeUser = params => {
+    return requestWrapper('POST',`${globalConfig.getAPIPath()}${globalConfig.login.delUser}`, null, params);
 };
-
-export const removeUser = params => { return axios.get(`${base}/user/remove`, { params: params }); };
 
 export const batchRemoveUser = params => { return axios.get(`${base}/user/batchremove`, { params: params }); };
 
-export const editUser = params => { return axios.get(`${base}/user/edit`, { params: params }); };
-
 export const addUser = params => {
     return requestWrapper('POST',`${globalConfig.getAPIPath()}${globalConfig.login.addUser}`,  params);
-    // return axios.get(`${base}/user/add`, { params: params });
 };
+
+export const getIpHost = params => {
+    return requestWrapper('GET',`http://freegeoip.net/json/`,null,params);
+};
+
+export const getBingPic = params => {
+    return axios.get(`http://cn.bing.com/HPImageArchive.aspx?idx=0&n=1`);
+    // return requestWrapper('POST',`http://cn.bing.com/HPImageArchive.aspx?idx=0&n=1`,null);
+};
+
+
+//任务列表
+
+export const getJobListPage = data => {
+    return requestWrapper('GET',`${globalConfig.getAPIPath()}${globalConfig.job.getJobList}`, null, data);
+};
+export const editJob = data => {
+    return requestWrapper('POST',`${globalConfig.getAPIPath()}${globalConfig.job.editJob}`,  data);
+};
+export const pauseJob = data => {
+    return requestWrapper('POST',`${globalConfig.getAPIPath()}${globalConfig.job.pauseJob}`,  data);
+};
+export const resumeJob = data => {
+    return requestWrapper('POST',`${globalConfig.getAPIPath()}${globalConfig.job.resumeJob}`,  data);
+};
+export const addJob = data => {
+    return requestWrapper('POST',`${globalConfig.getAPIPath()}${globalConfig.job.addJob}`,  data);
+};
+

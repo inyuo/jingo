@@ -1,5 +1,6 @@
 var SIGN_REGEXP = /([yMdhsm])(\1*)/g;
 var DEFAULT_PATTERN = 'yyyy-MM-dd';
+
 function padding(s, len) {
     var len = len - (s + '').length;
     for (var i = 0; i < len; i++) { s = '0' + s; }
@@ -25,8 +26,12 @@ export default {
         var regEmail=/^[A-Za-zd]+([-_.][A-Za-zd]+)*@([A-Za-zd]+[-.])+[A-Za-zd]{2,5}$/;
         return regEmail.test(str)
     },
-    formatDate: {
+    getCurrentIp:function () {
 
+    },
+
+
+    formatDate: {
 
         format: function (date, pattern) {
             pattern = pattern || DEFAULT_PATTERN;

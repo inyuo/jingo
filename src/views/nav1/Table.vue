@@ -20,33 +20,33 @@
                   style="width: 100%;">
             <el-table-column type="selection" width="55">
             </el-table-column>
-            <el-table-column type="ID" prop="user_Id" width="75" label="ID"  sortable>
+            <el-table-column type="ID" prop="user_Id" width="75" label="ID" sortable>
             </el-table-column>
-            <el-table-column prop="name" label="用户名" width="100" >
+            <el-table-column prop="name" label="用户名" width="100">
             </el-table-column>
-            <el-table-column prop="status" label="账户" :formatter="formatStatus" width="100" >
+            <el-table-column prop="status" label="账户" :formatter="formatStatus" width="100">
             </el-table-column>
-            <el-table-column prop="sex" label="性别" width="80" :formatter="formatSex" >
+            <el-table-column prop="sex" label="性别" width="80" :formatter="formatSex">
             </el-table-column>
-            <el-table-column prop="nickname" label="花名" width="70" >
+            <el-table-column prop="nickname" label="花名" width="70">
             </el-table-column>
-            <el-table-column prop="password" label="密码" width="70" >
+            <el-table-column prop="password" label="密码" width="70">
             </el-table-column>
-            <el-table-column prop="email" label="邮箱" width="200" >
+            <el-table-column prop="email" label="邮箱" width="200">
             </el-table-column>
-            <el-table-column prop="telephone" label="电话" width="125" >
+            <el-table-column prop="telephone" label="电话" width="125">
             </el-table-column>
-            <el-table-column prop="weixinid" label="微信ID" width="125" >
+            <el-table-column prop="weixinid" label="微信ID" width="125">
             </el-table-column>
-            <el-table-column prop="birthday" label="生日" width="120"  sortable>
+            <el-table-column prop="birthday" label="生日" width="120" sortable>
             </el-table-column>
             <el-table-column prop="address" label="地址" min-width="180" sortable>
             </el-table-column>
             <el-table-column prop="reg_Ip" label="注册ip" width="100" sortable>
             </el-table-column>
-            <el-table-column prop="reg_Time" label="注册时间" width="120"   sortable>
+            <el-table-column prop="reg_Time" label="注册时间" width="120" sortable>
             </el-table-column>
-            <el-table-column prop="last_Login_Time" label="最后登陆" width="120"  sortable>
+            <el-table-column prop="last_Login_Time" label="最后登陆" width="120" sortable>
             </el-table-column>
 
             <el-table-column label="操作" width="150">
@@ -103,11 +103,11 @@
         <!--新增界面-->
         <el-dialog title="新增" v-model="addFormVisible" :close-on-click-modal="false">
             <el-form :model="addForm" label-width="80px" :rules="addFormRules" ref="addForm">
-                <el-form-item label="姓名" prop="name">
+                <el-form-item label="用户名" prop="name">
                     <el-input v-model="addForm.name" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="密码" prop="password">
-                    <el-input type="password" v-model="editForm.password" auto-complete="off"></el-input>
+                    <el-input type="password" v-model.password="addForm.password" ></el-input>
                 </el-form-item>
                 <el-form-item label="性别">
                     <el-radio-group v-model="addForm.sex">
@@ -116,19 +116,19 @@
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="花名">
-                    <el-input v-model="editForm.nickname"></el-input>
+                    <el-input v-model="addForm.nickname"></el-input>
                 </el-form-item>
-                <el-form-item label="邮箱">
-                    <el-input v-model="editForm.email"></el-input>
+                <el-form-item label="邮箱" prop="email">
+                    <el-input v-model="addForm.email" auto-complete="on" ></el-input>
                 </el-form-item>
-                <el-form-item label="电话" prop="telephone" >
-                    <el-input type="number" v-model="editForm.telephone"></el-input>
+                <el-form-item label="电话" prop="telephone">
+                    <el-input v-model.telephone="addForm.telephone" type="number" ></el-input>
                 </el-form-item>
                 <el-form-item label="生日">
-                    <el-date-picker type="date" placeholder="选择日期" v-model="editForm.birthday"></el-date-picker>
+                    <el-date-picker type="date" placeholder="选择日期" v-model="addForm.birthday"></el-date-picker>
                 </el-form-item>
                 <el-form-item label="地址">
-                    <el-input type="textarea" v-model="editForm.address"></el-input>
+                    <el-input type="textarea" v-model="addForm.address"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -142,42 +142,53 @@
 <script>
     import util from '../../common/js/util'
     //import NProgress from 'nprogress'
-    import {getUserListPage, removeUser, batchRemoveUser, editUser, addUser} from '../../api/api';
+    import {getUserListPage, removeUser, batchRemoveUser, editUser, addUser,getIpHost} from '../../api/api';
 
     export default {
         data() {
+            var checkPhone = (rule, value, callback) => {
+                if (!value) {
+                    callback(new Error('请输入电话号码！'));
+                } else if (!util.isvalidPhone(value)) {
+                    callback(new Error('请输入正确的11位手机号码'));
+                } else {
+                    callback()
+                }
+            };
+            var checkEMail = (rule, value, callback) => {
+                if (!value) {
+                    callback(new Error('请输入邮箱地址！'));
+                } else if (!util.isvalidEmail(value)) {
+                    callback(new Error('请输入正确邮箱地址'));
+                } else {
+                    callback()
+                }
+            };
             var checkName = (rule, value, callback) => {
                 if (!value) {
                     return callback(new Error('用户名不能为空'));
                 }
                 setTimeout(() => {
-                    if (value.length<6|| value.length>13) {
-                        callback(new Error('用户名长度6-12'));
-                    }else {
+                    if (value.length < 3 || value.length > 13) {
+                        callback(new Error('用户名长度3-12'));
+                    } else {
                         callback();
                     }
                 }, 1000);
             };
             var checkPass = (rule, value, callback) => {
-                if (value === ''||value.length>18) {
-                    callback(new Error('请输入密码'));
-                } else  {
-                    callback();
-                }
-            };
-            var validPhone=(rule, value,callback)=>{
-                var reg=11 && /^((13|14|15|17|18)[0-9]{1}\d{8})$/;
                 console.log(value);
-                let tel=parseInt(value);
-                console.log(tel);
-                if (value==''){
-                    callback(new Error('请输入电话号码'))
-                }else  if (!reg.test(tel)){
-                    callback(new Error('请输入正确的11位手机号码'))
-                }else {
-                    callback()
+                if (value === '') {
+                    callback(new Error('请输入密码'));
+                } else {
+                    if (value.length>2&&value.length<12){
+                        callback();
+                    }else {
+                        callback(new Error('请输入密码3-12位！'));
+                    }
                 }
             };
+
             return {
                 filters: {
                     name: ''
@@ -193,19 +204,22 @@
                 editLoading: false,
                 editFormRules: {
                     name: [
-                        {validator: checkName,  trigger: 'blur'}
+                        {validator: checkName,required: true, trigger: 'blur'},
+
                     ],
                     telephone: [
-                        {validator: validPhone,  trigger: 'blur'}
+                        {validator: checkPhone, required: true, trigger: 'blur'}
+                    ],
+                    email:[
+                        {validator: checkEMail, required: true, trigger: 'blur'}
                     ]
                 },
                 //编辑界面数据
                 editForm: {
                     name: '',
                     sex: -1,
-                    nickname:'',
-                    telephone:'',
-                    email:'',
+                    nickname: '',
+                    email: '',
                     birthday: '',
                     address: ''
                 },
@@ -214,23 +228,25 @@
                 addLoading: false,
                 addFormRules: {
                     name: [
-                        {validator: checkName,  trigger: 'blur'}
+                        {validator: checkName, required: true, trigger: 'blur'},
                     ],
                     password: [
-                        {validator: checkPass,  trigger: 'blur'}
+                        {validator: checkPass, required: true, trigger: 'blur'}
                     ],
                     telephone: [
-                        {validator: validPhone,  trigger: 'blur'}
+                        {validator: checkPhone,  trigger: 'blur'}
+                    ],
+                    email:[
+                        {validator: checkEMail,  trigger: 'blur'}
                     ]
                 },
                 //新增界面数据
                 addForm: {
                     name: '',
-                    password:'1',
-                    nickname:'花花',
+                    password: '1',
+                    nickname: '花花',
                     sex: -1,
-                    email:'default@qq.com',
-                    telephone:'11',
+                    email: 'default@qq.com',
                     birthday: '',
                     address: 'default address'
                 }
@@ -241,7 +257,7 @@
             formatSex: function (row, column) {
                 return row.sex == 1 ? '男' : row.sex == 0 ? '女' : '未知';
             },
-            formatStatus:function (row, column) {
+            formatStatus: function (row, column) {
                 return row.status == 1 ? '已激活' : row.status == 0 ? '未验证' : '未知';
 
             },
@@ -256,8 +272,10 @@
                     currentPage: this.page,
                     pageSize: this.pageSize
                 };
+                getIpHost(null).then((res)=>{
+                    console.log(res);
+                });
                 this.listLoading = true;
-                console.log(para);
                 getUserListPage(para).then((res) => {
                     if (res.status === 0) {
                         this.total = res.data.length;
@@ -282,14 +300,20 @@
                 }).then(() => {
                     this.listLoading = true;
                     //NProgress.start();
-                    let para = {id: row.id};
+                    let para = {userId: row.id};
                     removeUser(para).then((res) => {
                         this.listLoading = false;
-                        //NProgress.done();
-                        this.$message({
-                            message: '删除成功',
-                            type: 'success'
-                        });
+                        if(res.status==0){
+                            this.$message({
+                                message: '删除成功',
+                                type: 'success'
+                            });
+                        }else {
+                            this.$message({
+                                message: '删除失败',
+                                type: 'warning'
+                            });
+                        }
                         this.getUsers();
                     });
                 }).catch(() => {
@@ -322,7 +346,6 @@
                             para.birth = (!para.birth || para.birth == '') ? '' : util.formatDate.format(new Date(para.birth), 'yyyy-MM-dd');
                             editUser(para).then((res) => {
                                 this.editLoading = false;
-                                //NProgress.done();
                                 this.$message({
                                     message: '提交成功',
                                     type: 'success'
@@ -335,24 +358,30 @@
                     }
                 });
             },
-            //新增
+            // 用户新增
             addSubmit: function () {
                 this.$refs.addForm.validate((valid) => {
                     if (valid) {
                         this.$confirm('确认提交吗？', '提示', {}).then(() => {
                             this.addLoading = true;
-                            //NProgress.start();
                             let para = Object.assign({}, this.addForm);
                             para.birthday = (!para.birthday || para.birthday == '') ? '' : util.formatDate.format(new Date(para.birthday), 'yyyy-MM-dd');
+
                             addUser(para).then((res) => {
                                 this.addLoading = false;
-                                //NProgress.done();
-                                this.$message({
-                                    message: '提交成功',
-                                    type: 'success'
-                                });
-                                this.$refs['addForm'].resetFields();
-                                this.addFormVisible = false;
+                                if (res.status==0){
+                                    this.$message({
+                                        message: '提交成功',
+                                        type: 'success'
+                                    });
+                                    this.$refs['addForm'].resetFields();
+                                    this.addFormVisible = false;
+                                }else {
+                                    this.$message({
+                                        message: '提交失败',
+                                        type: 'error'
+                                    });
+                                }
                                 this.getUsers();
                             });
                         });
@@ -369,7 +398,6 @@
                     type: 'warning'
                 }).then(() => {
                     this.listLoading = true;
-                    //NProgress.start();
                     let para = {ids: ids};
                     batchRemoveUser(para).then((res) => {
                         this.listLoading = false;
