@@ -299,9 +299,11 @@
                     type: 'warning'
                 }).then(() => {
                     this.listLoading = true;
-                    //NProgress.start();
-                    let para = {userId: row.id};
-                    removeUser(para).then((res) => {
+                    debugger;
+                    var userId = {
+                        "userId": row.user_Id
+                    };
+                    removeUser(userId).then((res) => {
                         this.listLoading = false;
                         if(res.status==0){
                             this.$message({

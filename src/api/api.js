@@ -25,25 +25,21 @@ let logger = new Logger('Ajax');
         if (globalConfig.api.timeout && !isNaN(globalConfig.api.timeout)) {
             tmp.timeout(globalConfig.api.timeout);
         }
-        // 默认的Content-Type和Accept x-www-form-urlencoded
+        // 默认的Content-Type和Accept
 
-        tmp.set('Accept', 'application/json');
         tmp.set('Access-Control-Allow-Origin', '*');
         tmp.set('Access-Control-Allow-Credential', 'true');
         tmp.set('Access-Control-Allow-Methods', 'GET, HEAD, POST, PUT, DELETE, OPTIONS');
-
         // url中是否有附加的参数?
-        if (method=='POST') {
-            tmp.set('Content-Type', 'application/son');
-
-            tmp.query(data);
+        if (method=='GET') {
+            tmp.set('Accept', 'application/json');
+            tmp.query(params);
         }
         // body中发送的数据?
-        if (method=='GET') {
-            tmp.set('Content-Type', 'application/x-www-form-urlencoded');
-            tmp.send(params);
+        if (method=='POST') {
+            tmp.set('Content-Type', 'application/json');
+            tmp.send(data);
         }
-        console.info(tmp);
         // 包装成promise
         tmp.end((err, res) => {
             logger.debug('err=%o, res=%o', err, res);
@@ -57,11 +53,15 @@ let logger = new Logger('Ajax');
         });
     });
 }
+//客户
+export const getCustomerList = params => {
+    return requestWrapper('GET',`${globalConfig.getAPIPath()}${globalConfig.customer.getCustomerList}`, null, params);
+};
 
 
-
+//用户
 export const requestLogin = data  => {
-    return requestWrapper('POST',`${globalConfig.getAPIPath()}${globalConfig.login.validate}`,  data);
+    return requestWrapper('POST',`${globalConfig.getAPIPath()}${globalConfig.login.validate}`,  data,null);
 };
 
 export const getUserList = params => {
@@ -72,14 +72,14 @@ export const getUserListPage = params => {
     return requestWrapper('GET',`${globalConfig.getAPIPath()}${globalConfig.login.getUserList}`,  null,params);
 };
 
-export const removeUser = params => {
-    return requestWrapper('POST',`${globalConfig.getAPIPath()}${globalConfig.login.delUser}`, null, params);
+export const removeUser = data => {
+    return requestWrapper('POST',`${globalConfig.getAPIPath()}${globalConfig.login.delUser}`, data, null);
 };
 
 export const batchRemoveUser = params => { return axios.get(`${base}/user/batchremove`, { params: params }); };
 
-export const addUser = params => {
-    return requestWrapper('POST',`${globalConfig.getAPIPath()}${globalConfig.login.addUser}`,  params);
+export const addUser = data => {
+    return requestWrapper('POST',`${globalConfig.getAPIPath()}${globalConfig.login.addUser}`,  data,null);
 };
 
 export const getIpHost = params => {
@@ -98,15 +98,15 @@ export const getJobListPage = data => {
     return requestWrapper('GET',`${globalConfig.getAPIPath()}${globalConfig.job.getJobList}`, null, data);
 };
 export const editJob = data => {
-    return requestWrapper('POST',`${globalConfig.getAPIPath()}${globalConfig.job.editJob}`,  data);
+    return requestWrapper('POST',`${globalConfig.getAPIPath()}${globalConfig.job.editJob}`,  data,null);
 };
 export const pauseJob = data => {
-    return requestWrapper('POST',`${globalConfig.getAPIPath()}${globalConfig.job.pauseJob}`,  data);
+    return requestWrapper('POST',`${globalConfig.getAPIPath()}${globalConfig.job.pauseJob}`,  data,null);
 };
 export const resumeJob = data => {
-    return requestWrapper('POST',`${globalConfig.getAPIPath()}${globalConfig.job.resumeJob}`,  data);
+    return requestWrapper('POST',`${globalConfig.getAPIPath()}${globalConfig.job.resumeJob}`,  data,null);
 };
 export const addJob = data => {
-    return requestWrapper('POST',`${globalConfig.getAPIPath()}${globalConfig.job.addJob}`,  data);
+    return requestWrapper('POST',`${globalConfig.getAPIPath()}${globalConfig.job.addJob}`,  data,null);
 };
 

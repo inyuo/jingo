@@ -47,6 +47,12 @@ module.exports = {
         addUser:'user/add',     //添加用户
         delUser:'user/remove',     //添加用户
     },
+    customer: {  // 登录相关配置
+        getCustomerList:'customer/list', //获取用户列表
+        addCustomer:'customer/add',     //添加用户
+        updateCustomer:'customer/update',     //添加用户
+        delCustomer:'customer/remove',     //添加用户
+    },
     job: {  // 登录相关配置
         getJobList: 'quartz/list',    // 获取任务列表
         addJob: 'quartz/add',  // 添加任务

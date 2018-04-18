@@ -7,7 +7,7 @@
 					<el-input v-model="filters.name" placeholder="姓名"></el-input>
 				</el-form-item>
 				<el-form-item>
-					<el-button type="primary" v-on:click="getUser">查询</el-button>
+					<el-button type="primary" v-on:click="getCustomers">查询</el-button>
 				</el-form-item>
 			</el-form>
 		</el-col>
@@ -17,15 +17,21 @@
 			<el-table :data="users" highlight-current-row v-loading="loading" style="width: 100%;">
 				<el-table-column type="index" width="60">
 				</el-table-column>
-				<el-table-column prop="name" label="姓名" width="120" sortable>
+				<el-table-column type="ID" prop="customer_id" width="125" label="ID" sortable>
 				</el-table-column>
-				<el-table-column prop="sex" label="性别" width="100" :formatter="formatSex" sortable>
+				<el-table-column prop="contacts_id" label="首要联系人" width="175" sortable>
 				</el-table-column>
-				<el-table-column prop="age" label="年龄" width="100" sortable>
+				<el-table-column prop="name" label="用户名" width="175"  sortable>
 				</el-table-column>
-				<el-table-column prop="birth" label="生日" width="120" sortable>
+				<el-table-column prop="origin" label="来源" width="175"  sortable>
 				</el-table-column>
-				<el-table-column prop="addr" label="地址" min-width="180" sortable>
+				<el-table-column prop="address" label="地区" width="175" sortable>
+				</el-table-column>
+				<el-table-column prop="industry" label="企业"  width="175" l sortable>
+				</el-table-column>
+				<el-table-column prop="is_locked" label="是否锁定" width="175"  sortable>
+				</el-table-column>
+				<el-table-column  prop="update_time" label="更新时间" width="175"  sortable>
 				</el-table-column>
 			</el-table>
 		</template>
@@ -33,7 +39,7 @@
 	</section>
 </template>
 <script>
-	import { getUserList } from '../../api/api';
+	import { getCustomerList } from '../../api/api';
 	//import NProgress from 'nprogress'
 	export default {
 		data() {
@@ -52,21 +58,19 @@
 				return row.sex == 1 ? '男' : row.sex == 0 ? '女' : '未知';
 			},
 			//获取用户列表
-			getUser: function () {
+            getCustomers: function () {
 				let para = {
 					name: this.filters.name
 				};
 				this.loading = true;
-				//NProgress.start();
-				getUserList(para).then((res) => {
+                getCustomerList(para).then((res) => {
 					this.users = res.data.users;
 					this.loading = false;
-					//NProgress.done();
 				});
 			}
 		},
 		mounted() {
-			this.getUser();
+			// this.getCustomers();
 		}
 	};
 
