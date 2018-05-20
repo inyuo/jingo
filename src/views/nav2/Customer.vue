@@ -28,7 +28,7 @@
             </el-table-column>
             <el-table-column prop="sex" label="性别" width="80" :formatter="formatSex">
             </el-table-column>
-            <el-table-column prop="nickname" label="花名" width="70">
+            <el-table-column prop="nickname" label="花名" width="120">
             </el-table-column>
             <el-table-column prop="password" label="密码" width="70">
             </el-table-column>
@@ -142,7 +142,7 @@
 <script>
     import util from '../../common/js/util'
     //import NProgress from 'nprogress'
-    import {getUserListPage, removeUser, batchRemoveUser, editUser, addUser,getIpHost} from '../../api/api';
+    import {getUserListPage, removeUser, batchRemoveUser,  addUser,getIpHost} from '../../api/api';
 
     export default {
         data() {
@@ -346,7 +346,7 @@
                             //NProgress.start();
                             let para = Object.assign({}, this.editForm);
                             para.birth = (!para.birth || para.birth == '') ? '' : util.formatDate.format(new Date(para.birth), 'yyyy-MM-dd');
-                            editUser(para).then((res) => {
+                           /* editUser(para).then((res) => {
                                 this.editLoading = false;
                                 this.$message({
                                     message: '提交成功',
@@ -355,7 +355,7 @@
                                 this.$refs['editForm'].resetFields();
                                 this.editFormVisible = false;
                                 this.getUsers();
-                            });
+                            });*/
                         });
                     }
                 });
