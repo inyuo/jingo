@@ -286,6 +286,7 @@
                             type: 'success'
                         });
                     } else {
+                        this.listLoading = false;
                         this.$message({
                             message: '加载失败',
                             type: 'error'
