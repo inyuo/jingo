@@ -61,25 +61,27 @@ export const getCustomerList = params => {
 
 //用户
 export const requestLogin = data  => {
-    return requestWrapper('POST',`${globalConfig.getAPIPath()}${globalConfig.login.validate}`,  data,null);
+    return requestWrapper('POST',`${globalConfig.getAPIPath()}${globalConfig.user.validate}`,  data,null);
 };
 
 export const getUserList = params => {
-    return requestWrapper('GET',`${globalConfig.getAPIPath()}${globalConfig.login.getUserList}`, null, params);
+    return requestWrapper('GET',`${globalConfig.getAPIPath()}${globalConfig.user.getUserList}`, null, params);
 };
 
 export const getUserListPage = params => {
-    return requestWrapper('GET',`${globalConfig.getAPIPath()}${globalConfig.login.getUserList}`,  null,params);
+    return requestWrapper('GET',`${globalConfig.getAPIPath()}${globalConfig.user.getUserList}`,  null,params);
 };
 
 export const removeUser = data => {
-    return requestWrapper('POST',`${globalConfig.getAPIPath()}${globalConfig.login.delUser}`, data, null);
+    return requestWrapper('POST',`${globalConfig.getAPIPath()}${globalConfig.user.delUser}`, data, null);
 };
 
-export const batchRemoveUser = params => { return axios.get(`${base}/user/batchremove`, { params: params }); };
+export const batchRemoveUser = data => {
+    return requestWrapper('POST',`${globalConfig.getAPIPath()}${globalConfig.user.batchremove}`, data, null);
+};
 
 export const addUser = data => {
-    return requestWrapper('POST',`${globalConfig.getAPIPath()}${globalConfig.login.addUser}`,  data,null);
+    return requestWrapper('POST',`${globalConfig.getAPIPath()}${globalConfig.user.addUser}`,  data,null);
 };
 
 export const getIpHost = params => {

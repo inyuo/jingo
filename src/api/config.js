@@ -35,7 +35,7 @@ module.exports = {
         timeout: 15000,  // 请求的超时时间, 单位毫秒
     },
 
-    login: {  // 登录相关配置
+    user: {  // 登录相关配置
         getCurrentUser: 'user/getCurrentUser',    // 后端必须要提供接口校验当前用户的身份, 如果拿不到用户信息, 才会尝试登录
         // 登录有两种情况:
         // 1. 使用sso登录, 直接跳转就可以了
@@ -45,7 +45,8 @@ module.exports = {
         logout: 'user/logout',  // 退出的url, 用户点击退出时, 浏览器会直接跳转到这个链接
         getUserList:'user/list', //获取用户列表
         addUser:'user/add',     //添加用户
-        delUser:'user/remove',     //添加用户
+        delUser:'user/remove',     //删除用户
+        batchremove:'user/removeUserList',     //批量删除用户
     },
     customer: {  // 登录相关配置
         getCustomerList:'customer/list', //获取用户列表

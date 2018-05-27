@@ -20,7 +20,7 @@
                   style="width: 100%;">
             <el-table-column type="selection" width="55">
             </el-table-column>
-            <el-table-column type="ID" prop="user_Id" width="75" label="ID" sortable>
+            <el-table-column  prop="user_Id" width="75" label="ID" show-overflow-tooltip>
             </el-table-column>
             <el-table-column prop="name" label="用户名" width="100">
             </el-table-column>
@@ -30,7 +30,7 @@
             </el-table-column>
             <el-table-column prop="nickname" label="花名" width="120">
             </el-table-column>
-            <el-table-column prop="password" label="密码" width="70">
+            <el-table-column prop="password" label="密码" width="100">
             </el-table-column>
             <el-table-column prop="email" label="邮箱" width="200">
             </el-table-column>
@@ -38,7 +38,7 @@
             </el-table-column>
             <el-table-column prop="weixinid" label="微信ID" width="125">
             </el-table-column>
-            <el-table-column prop="birthday" label="生日" width="120" sortable>
+            <el-table-column prop="birthday" label="生日" width="160" :formatter="formatDate" sortable>
             </el-table-column>
             <el-table-column prop="address" label="地址" min-width="180" sortable>
             </el-table-column>
@@ -59,7 +59,7 @@
 
         <!--工具条-->
         <el-col :span="24" class="toolbar">
-            <el-button type="danger" @click="batchRemove" :disabled="this.sels.length===0">批量删除</el-button>
+            <el-button type="danger" v-on:click="batchRemove" :disabled="this.sels.length===0">批量删除</el-button>
             <el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="20"
                            :total="total" style="float:right;">
             </el-pagination>
@@ -141,8 +141,8 @@
 
 <script>
     import util from '../../common/js/util'
-    //import NProgress from 'nprogress'
     import {getUserListPage, removeUser, batchRemoveUser,  addUser,getIpHost} from '../../api/api';
+    import {getTime} from '../../api/commonUtil';
 
     export default {
         data() {
@@ -259,12 +259,11 @@
             },
             formatStatus: function (row, column) {
                 return row.status == 1 ? '已激活' : row.status == 0 ? '未验证' : '未知';
+            },
+            formatDate: function (row, column) {
+                return row.birthday == null ? 'NUll'  : getTime( row.birthday) ;
+            },
 
-            },
-            handleCurrentChange(val) {
-                this.page = val;
-                this.getUsers();
-            },
             //获取用户列表
             getUsers() {
                 let para = {
@@ -277,9 +276,9 @@
                 });
                 this.listLoading = true;
                 getUserListPage(para).then((res) => {
-                    if (res.status === 0) {
-                        this.total = res.data.length;
-                        this.users = res.data;
+                    if (res.status === 0&& res.data !== null&& res.data!=undefined) {
+                        this.total = res.data.totalNum;
+                        this.users = res.data.itemList;
                         this.listLoading = false;
                         this.$message({
                             message: '加载成功',
@@ -293,6 +292,11 @@
                         });
                     }
                 });
+            },
+            //换页
+            handleCurrentChange(val) {
+                this.page = val;
+                this.getUsers();
             },
             //删除
             handleDel: function (index, row) {
@@ -320,7 +324,11 @@
                         this.getUsers();
                     });
                 }).catch(() => {
-
+                    this.listLoading = false;
+                    this.$message({
+                        message: '删除失败',
+                        type: 'warning'
+                    });
                 });
             },
             //显示编辑界面
@@ -396,22 +404,30 @@
             },
             //批量删除
             batchRemove: function () {
-                var ids = this.sels.map(item => item.id).toString();
+                var ids = this.sels.map(item => item.userId).toString();
                 this.$confirm('确认删除选中记录吗？', '提示', {
                     type: 'warning'
                 }).then(() => {
                     this.listLoading = true;
-                    let para = {ids: ids};
-                    batchRemoveUser(para).then((res) => {
+                    let param = {userIds: ids};
+                    console.log(ids);
+                    batchRemoveUser(param).then((res) => {
                         this.listLoading = false;
-                        //NProgress.done();
-                        this.$message({
-                            message: '删除成功',
-                            type: 'success'
-                        });
+                        if(res.status==0){
+                            this.$message({
+                                message: '删除成功',
+                                type: 'success'
+                            });
+                        }else {
+                            this.$message({
+                                message: '删除失败',
+                                type: 'warning'
+                            });
+                        }
                         this.getUsers();
                     });
                 }).catch(() => {
+                    this.listLoading = false;
 
                 });
             }
